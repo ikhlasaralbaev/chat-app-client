@@ -21,6 +21,6 @@ export const AuthService: IAuthService = {
 	},
 	async getMe(): Promise<ILoginResponseData> {
 		const res = await axiosInstance.get('/auth/profile')
-		return res.data
+		return res.data.data
 	},
 }

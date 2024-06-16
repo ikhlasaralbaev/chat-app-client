@@ -7,30 +7,22 @@ import {
 	VStack,
 	useColorModeValue,
 } from '@chakra-ui/react'
+import { useAppSelector } from 'hooks/store.hooks'
+import moment from 'moment'
 import React from 'react'
-
-interface ChatMessageProps {
-	avatarUrl: string
-	username: string
-	message: string
-	time: string
-	edited?: boolean
-	isMyMessage?: boolean
-	repliedMessage?: {
-		username: string
-		message: string
-	}
-}
+import { IMessage } from 'services/rooms/rooms.types'
+interface ChatMessageProps extends IMessage {}
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
-	avatarUrl,
-	username,
+	created_at,
 	message,
-	time,
-	edited = false,
-	isMyMessage = false,
-	repliedMessage,
+	created_by,
 }) => {
+	const { user } = useAppSelector(state => state.auth)
+	const isMyMessage = user?.id == created_by.id
+	const repliedMessage = null
+	const edited = false
+
 	return (
 		<VStack
 			align={isMyMessage ? 'end' : 'start'}
@@ -56,18 +48,20 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 					w='full'
 				>
 					<Text fontSize='sm' fontWeight='bold'>
-						{repliedMessage.username}
+						{''}
 					</Text>
-					<Text fontSize='sm'>{repliedMessage.message}</Text>
+					<Text fontSize='sm'>{''}</Text>
 				</Box>
 			)}
 			<HStack align='start' spacing={4}>
-				{!isMyMessage && <Avatar src={avatarUrl} name={username} />}
+				{!isMyMessage && (
+					<Avatar src={created_by.avatar} name={created_by.name} />
+				)}
 				<VStack align='start' spacing={1}>
 					<HStack>
-						{!isMyMessage && <Text fontWeight='bold'>{username}</Text>}
+						{<Text fontWeight='bold'>{created_by.name}</Text>}
 						<Text fontSize='sm' color='gray.500'>
-							{time}
+							{moment(created_at).format('HH:mm:ss')}
 						</Text>
 						{edited && (
 							<Text fontSize='xs' color='gray.400'>
@@ -77,7 +71,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 					</HStack>
 					<Text>{message}</Text>
 				</VStack>
-				{isMyMessage && <Avatar src={avatarUrl} name={username} />}
+				{isMyMessage && (
+					<Avatar src={created_by.avatar} name={created_by.name} />
+				)}
 			</HStack>
 		</VStack>
 	)

@@ -7,6 +7,7 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react'
 import EmojiPicker from 'emoji-picker-react'
+import { useAppSelector } from 'hooks/store.hooks'
 import useClickOutside from 'hooks/use-click-outside'
 import React, { useState } from 'react'
 import { BiSend } from 'react-icons/bi'
@@ -17,6 +18,7 @@ interface SendMessageFormProps {
 }
 
 const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
+	const { isLoading } = useAppSelector(state => state.rooms)
 	const [message, setMessage] = useState('')
 	const [files, setFiles] = useState<File[]>([])
 	const { isOpen, onToggle } = useDisclosure()
@@ -82,9 +84,8 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 					variant={'ghost'}
 					size='sm'
 					colorScheme='blue'
-					type='submit'
+					type='button'
 					aria-label='Send message'
-					isLoading={false}
 					disabled={message.trim().length === 0}
 				>
 					<BsEmojiSmile size={'28px'} />
@@ -95,7 +96,7 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 					colorScheme='blue'
 					type='submit'
 					aria-label='Send message'
-					isLoading={false}
+					isLoading={isLoading}
 					disabled={message.trim().length === 0}
 				>
 					<BiSend size={'28px'} />

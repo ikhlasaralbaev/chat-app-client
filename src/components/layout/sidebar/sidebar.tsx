@@ -2,19 +2,28 @@ import { Box } from '@chakra-ui/react'
 import ChatList from 'components/common/chat-list/chat-list'
 import SearchChat from 'components/common/search-chat/search-chat'
 import SidebarHeader from 'components/common/sidebar-header/sidebar-header'
+import SidebarRecommendedChats from 'components/common/sidebar-recommended-chats/sidebar-recommended-chats'
+import { useAppDispatch, useAppSelector } from 'hooks/store.hooks'
 import useClickOutside from 'hooks/use-click-outside'
 import useSidebarCollapse from 'hooks/use-sidebar-collapse'
-import { FC } from 'react'
-import { useDispatch } from 'react-redux'
+import { FC, useEffect } from 'react'
+import { subscribedRooms } from 'store/actions/rooms.action'
 import { toggleSidebar } from 'store/slices/ui/ui.slice'
 
 const Sidebar: FC = () => {
+	const { subscribedRooms: subscribedRoomsData } = useAppSelector(
+		state => state.rooms
+	)
+	const dispatch = useAppDispatch()
 	const sidebarToggleStyles = useSidebarCollapse()
-	const dispatch = useDispatch()
 
 	// close sidebar on click outside
 	const closeSidebar = () => dispatch(toggleSidebar(false))
 	const sidebarRef = useClickOutside(closeSidebar)
+
+	useEffect(() => {
+		dispatch(subscribedRooms())
+	}, [])
 
 	return (
 		<Box
@@ -41,7 +50,11 @@ const Sidebar: FC = () => {
 		>
 			<SidebarHeader />
 			<SearchChat />
-			<ChatList />
+			{subscribedRoomsData.length === 0 ? (
+				<SidebarRecommendedChats />
+			) : (
+				<ChatList />
+			)}
 		</Box>
 	)
 }

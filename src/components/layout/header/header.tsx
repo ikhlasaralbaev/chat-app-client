@@ -1,12 +1,14 @@
 import { Avatar, Box, Flex, IconButton, Stack, Text } from '@chakra-ui/react'
 import ProfileBtn from 'components/common/profile-btn/profile-btn'
 import ToggleColorMode from 'components/common/toggle-color-mode/toggle-color-mode'
+import { useAppSelector } from 'hooks/store.hooks'
 import { FC } from 'react'
 import { CgMenuLeft } from 'react-icons/cg'
 import { useDispatch } from 'react-redux'
 import { toggleSidebar } from 'store/slices/ui/ui.slice'
 
 const Header: FC = () => {
+	const { selectedRoom } = useAppSelector(state => state.rooms)
 	const dispatch = useDispatch()
 
 	// toggle sidebar
@@ -45,9 +47,9 @@ const Header: FC = () => {
 						<CgMenuLeft size={'20px'} />
 					</IconButton>
 					<Flex alignItems={'center'} gap={4}>
-						<Avatar src='https://picsum.photos/100' />
+						<Avatar src={selectedRoom?.avatar} />
 						<Stack spacing={0}>
-							<Text fontWeight={'semibold'}>General chat.</Text>
+							<Text fontWeight={'semibold'}>{selectedRoom?.name}</Text>
 							<Text color={'gray'} fontSize={'sm'}>
 								14 members, 2 online.
 							</Text>

@@ -25,7 +25,7 @@ const Layout: FC = () => {
 						base: '100%',
 						md: 'calc(100vw - 320px)',
 					}}
-					h={'calc(100vh - 70px)'}
+					h={'calc(100vh)'}
 					overflowY={'auto'}
 				>
 					<Header />

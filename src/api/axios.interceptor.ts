@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
 	config => {
 		// Add authorization header if token exists
-		const token = localStorage.getItem('token')
+		const token = localStorage.getItem('chat-token')
 		if (token) {
 			config.headers['Authorization'] = `Bearer ${token}`
 		}
