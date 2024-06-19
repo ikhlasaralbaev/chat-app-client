@@ -6,6 +6,7 @@ import {
 	Room,
 } from 'services/rooms/rooms.types'
 import {
+	createRoom,
 	recommendedRooms,
 	roomMessages,
 	sendMessageAction,
@@ -30,6 +31,8 @@ export interface IRoomsInitialState {
 	} | null
 	newMessages: IMessageInStateType[]
 	recommendedRoomsList: Room[]
+	messageIsOpenContextMenu: null | string
+	replyToMessage: null | IMessage
 }
 
 export const initialState: IRoomsInitialState = {
@@ -40,6 +43,8 @@ export const initialState: IRoomsInitialState = {
 	selectedRoom: null,
 	recommendedRoomsList: [],
 	newMessages: [],
+	messageIsOpenContextMenu: null,
+	replyToMessage: null,
 }
 
 export const roomsSlice = createSlice({
@@ -87,6 +92,12 @@ export const roomsSlice = createSlice({
 			} else {
 				state.newMessages[index] = action.payload
 			}
+		},
+		onContextMenuMessage: (state, action: PayloadAction<string | null>) => {
+			state.messageIsOpenContextMenu = action.payload
+		},
+		setReplyToMessage: (state, action: PayloadAction<IMessage | null>) => {
+			state.replyToMessage = action.payload
 		},
 	},
 	extraReducers: builder => {
@@ -139,9 +150,23 @@ export const roomsSlice = createSlice({
 			.addCase(sendMessageAction.rejected, state => {
 				state.isLoading = false
 			})
+			.addCase(createRoom.pending, state => {
+				state.isLoading = true
+			})
+			.addCase(createRoom.fulfilled, (state, action) => {
+				state.isLoading = false
+			})
+			.addCase(createRoom.rejected, state => {
+				state.isLoading = false
+			})
 	},
 })
 
-export const { selectedRoom, addIncomingMessage, saveMessages } =
-	roomsSlice.actions
+export const {
+	selectedRoom,
+	addIncomingMessage,
+	saveMessages,
+	onContextMenuMessage,
+	setReplyToMessage,
+} = roomsSlice.actions
 export default roomsSlice.reducer

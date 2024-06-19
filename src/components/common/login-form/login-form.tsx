@@ -1,7 +1,7 @@
 import { Box, Button, Heading, VStack, useToast } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import FormInput from 'components/common/form-input/form-input'
-import { useAppDispatch } from 'hooks/store.hooks'
+import { useAppDispatch, useAppSelector } from 'hooks/store.hooks'
 import { loginSchema } from 'lib/validations/auth.validation'
 import React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -13,6 +13,8 @@ interface LoginFormInputs {
 }
 
 const LoginForm: React.FC = () => {
+	const { isLoading } = useAppSelector(state => state.auth)
+
 	const dispatch = useAppDispatch()
 	const toast = useToast()
 
@@ -46,7 +48,12 @@ const LoginForm: React.FC = () => {
 					<VStack spacing={4}>
 						<FormInput name='email' label='Email' type='email' />
 						<FormInput name='password' label='Password' type='password' />
-						<Button type='submit' colorScheme='blue' width='full'>
+						<Button
+							type='submit'
+							colorScheme='blue'
+							width='full'
+							isLoading={isLoading}
+						>
 							Login
 						</Button>
 					</VStack>

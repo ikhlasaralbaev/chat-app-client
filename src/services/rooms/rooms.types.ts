@@ -82,6 +82,9 @@ export interface IMessage {
 	created_at: string
 	room: Room
 	created_by: IMessageCreatedBy
+	file?: string
+	replied_message?: IMessage | null
+	replies?: IMessage[] | null
 }
 
 export interface IMessageCreatedBy {
@@ -98,10 +101,20 @@ export interface IMessageCreatedBy {
 export interface Room {
 	_id: string
 	name: string
-	type: string
 	info: string
 	link: string
 	created_by: number
 	updated_at: string
 	created_at: string
+}
+
+export interface IRoomCreateResponse {
+	data: Room
+	message: string
+}
+
+export interface IRoomCreateRequest {
+	name: string
+	info: string
+	link: string
 }

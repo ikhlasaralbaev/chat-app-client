@@ -1,6 +1,7 @@
 import Layout from 'components/layout'
 import { useAppDispatch } from 'hooks/store.hooks'
 import AuthPage from 'pages/auth/auth'
+import CreateRoom from 'pages/create-room/create-room'
 import RecommendedRooms from 'pages/recommended-rooms/recommended-rooms'
 import { FC, useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
@@ -28,6 +29,7 @@ const App: FC = () => {
 				<Route path='/' element={<Welcome />} />
 				<Route path='/chat/:roomId' element={<Chat />} />
 				<Route path='/recommended-rooms' element={<RecommendedRooms />} />
+				<Route path='/create-room' element={<CreateRoom />} />
 			</Route>
 		</Routes>
 	)

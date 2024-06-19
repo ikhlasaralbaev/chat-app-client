@@ -1,6 +1,6 @@
 import { Box, Button, Heading, VStack, useToast } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useAppDispatch } from 'hooks/store.hooks'
+import { useAppDispatch, useAppSelector } from 'hooks/store.hooks'
 import { registerSchema } from 'lib/validations/auth.validation'
 import React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -11,6 +11,7 @@ import FormInput from '../form-input/form-input'
 interface RegisterFormInputs extends IRegisterRequestData {}
 
 const RegisterForm: React.FC = () => {
+	const { isLoading } = useAppSelector(state => state.auth)
 	const dispatch = useAppDispatch()
 	const toast = useToast()
 
@@ -45,7 +46,12 @@ const RegisterForm: React.FC = () => {
 						<FormInput name='name' label='Name' />
 						<FormInput name='email' label='Email' type='email' />
 						<FormInput name='password' label='Password' type='password' />
-						<Button type='submit' colorScheme='blue' width='full'>
+						<Button
+							type='submit'
+							colorScheme='blue'
+							width='full'
+							isLoading={isLoading}
+						>
 							Register
 						</Button>
 					</VStack>

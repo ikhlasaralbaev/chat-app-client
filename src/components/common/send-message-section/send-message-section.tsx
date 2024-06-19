@@ -4,25 +4,28 @@ import {
 	IconButton,
 	Input,
 	InputGroup,
+	useColorModeValue,
 	useDisclosure,
 } from '@chakra-ui/react'
 import EmojiPicker from 'emoji-picker-react'
-import { useAppSelector } from 'hooks/store.hooks'
+import { useAppDispatch, useAppSelector } from 'hooks/store.hooks'
 import useClickOutside from 'hooks/use-click-outside'
 import React, { useState } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { BsEmojiSmile } from 'react-icons/bs'
+import ReplyToMessageSection from './reply-to-message-section/reply-to-message-section'
 
 interface SendMessageFormProps {
 	onSubmit?: (message: string, files: File[]) => void
 }
 
 const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
-	const { isLoading } = useAppSelector(state => state.rooms)
+	const { isLoading, replyToMessage } = useAppSelector(state => state.rooms)
 	const [message, setMessage] = useState('')
 	const [files, setFiles] = useState<File[]>([])
 	const { isOpen, onToggle } = useDisclosure()
 	const emojiRef = useClickOutside(() => onToggle())
+	const dispatch = useAppDispatch()
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
@@ -46,7 +49,9 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 		<Box
 			as='form'
 			onSubmit={handleSubmit}
-			p={4}
+			px={4}
+			py={2}
+			pb={4}
 			position={'fixed'}
 			bottom={'0'}
 			left={{
@@ -59,17 +64,35 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 			zIndex='50'
 			borderTop={'1px solid rgba(0,0,0,.05)'}
 		>
+			{replyToMessage ? <ReplyToMessageSection /> : null}
 			<Flex align='center' gap={2}>
-				<IconButton
-					aria-label='Attach files'
-					size={'md'}
-					icon={
+				<label htmlFor='file-upload'>
+					<Box
+						cursor={'pointer'}
+						w={'40px'}
+						h={'40px'}
+						display={'flex'}
+						alignItems={'center'}
+						justifyContent={'center'}
+						rounded={'md'}
+						_hover={{
+							bg: useColorModeValue('rgba(0,0,0,.1)', 'rgba(255,255,255,.2)'),
+						}}
+						transition={'all .2s linear'}
+					>
 						<span role='img' aria-label='attachment'>
 							📎
 						</span>
-					}
-					variant='ghost'
-				/>
+					</Box>
+					<input
+						type='file'
+						accept='image/*, video/*, audio/*'
+						onChange={handleFileChange}
+						style={{ visibility: 'hidden', position: 'absolute' }}
+						id='file-upload'
+						name='file-upload'
+					/>
+				</label>
 				<InputGroup>
 					<Input
 						placeholder='Type a message...'
@@ -107,14 +130,6 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 					<EmojiPicker onEmojiClick={handleEmojiSelect} />
 				</Box>
 			)}
-			<input
-				type='file'
-				multiple
-				accept='image/*, video/*, audio/*'
-				onChange={handleFileChange}
-				style={{ display: 'none' }}
-				id='file-upload'
-			/>
 		</Box>
 	)
 }
