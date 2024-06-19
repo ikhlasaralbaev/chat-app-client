@@ -54,7 +54,7 @@ const Header: FC = () => {
 							<Stack spacing={0}>
 								<Text fontWeight={'semibold'}>{selectedRoom?.name}</Text>
 								<Text color={'gray'} fontSize={'sm'}>
-									14 members, 2 online.
+									@{selectedRoom?.link}
 								</Text>
 							</Stack>
 						</Flex>

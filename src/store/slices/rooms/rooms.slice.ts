@@ -7,10 +7,13 @@ import {
 } from 'services/rooms/rooms.types'
 import {
 	createRoom,
+	deleteMessageAction,
 	recommendedRooms,
 	roomMessages,
+	searchRooms,
 	sendMessageAction,
 	subscribedRooms,
+	updateMessageAction,
 } from 'store/actions/rooms.action'
 import { IMessage } from './../../../services/rooms/rooms.types'
 
@@ -28,11 +31,18 @@ export interface IRoomsInitialState {
 		id: string
 		name: string
 		avatar: string
+		link: string
 	} | null
 	newMessages: IMessageInStateType[]
 	recommendedRoomsList: Room[]
 	messageIsOpenContextMenu: null | string
 	replyToMessage: null | IMessage
+	isSendingMessage: boolean
+	isDeletingMessage?: boolean
+	deleteMessageId: string | null
+	updatingMessage: IMessage | null
+	searchedRooms: ISubscribedRoom[]
+	isSearchingRooms: boolean
 }
 
 export const initialState: IRoomsInitialState = {
@@ -45,6 +55,12 @@ export const initialState: IRoomsInitialState = {
 	newMessages: [],
 	messageIsOpenContextMenu: null,
 	replyToMessage: null,
+	isSendingMessage: false,
+	isDeletingMessage: false,
+	deleteMessageId: null,
+	updatingMessage: null,
+	searchedRooms: [],
+	isSearchingRooms: false,
 }
 
 export const roomsSlice = createSlice({
@@ -82,6 +98,17 @@ export const roomsSlice = createSlice({
 				}
 			}
 		},
+		deleteMessage: (
+			state,
+			action: PayloadAction<{ room: string; message: string }>
+		) => {
+			const data = state.newMessages
+			const room = data.findIndex(item => item.room === action.payload.room)
+
+			state.newMessages[room].message = data[room].message.filter(
+				item => item._id !== action.payload.message
+			)
+		},
 		saveMessages: (state, action: PayloadAction<IMessageInStateType>) => {
 			const index = state.newMessages.findIndex(
 				item => item.room === action.payload.room
@@ -98,6 +125,34 @@ export const roomsSlice = createSlice({
 		},
 		setReplyToMessage: (state, action: PayloadAction<IMessage | null>) => {
 			state.replyToMessage = action.payload
+		},
+		setDeleteMessageId: (state, action: PayloadAction<string | null>) => {
+			state.deleteMessageId = action.payload
+		},
+		onUpdateMessage: (
+			state,
+			action: PayloadAction<{
+				message: string
+				message_id: string
+				room: string
+			}>
+		) => {
+			const data = state.newMessages
+			const room = data.findIndex(item => item.room === action.payload.room)
+
+			state.newMessages[room].message = data[room].message.map(item => {
+				if (item._id === action.payload.message_id) {
+					return {
+						...item,
+						message: action.payload.message,
+					}
+				} else {
+					return item
+				}
+			})
+		},
+		setUpdatingMessage: (state, action: PayloadAction<IMessage | null>) => {
+			state.updatingMessage = action.payload
 		},
 	},
 	extraReducers: builder => {
@@ -142,13 +197,13 @@ export const roomsSlice = createSlice({
 				state.isLoading = false
 			})
 			.addCase(sendMessageAction.pending, state => {
-				state.isLoading = true
+				state.isSendingMessage = true
 			})
 			.addCase(sendMessageAction.fulfilled, (state, action) => {
-				state.isLoading = false
+				state.isSendingMessage = false
 			})
 			.addCase(sendMessageAction.rejected, state => {
-				state.isLoading = false
+				state.isSendingMessage = false
 			})
 			.addCase(createRoom.pending, state => {
 				state.isLoading = true
@@ -159,6 +214,34 @@ export const roomsSlice = createSlice({
 			.addCase(createRoom.rejected, state => {
 				state.isLoading = false
 			})
+			.addCase(deleteMessageAction.pending, state => {
+				state.isDeletingMessage = true
+			})
+			.addCase(deleteMessageAction.fulfilled, state => {
+				state.isDeletingMessage = false
+			})
+			.addCase(deleteMessageAction.rejected, state => {
+				state.isDeletingMessage = false
+			})
+			.addCase(updateMessageAction.pending, state => {
+				state.isDeletingMessage = true
+			})
+			.addCase(updateMessageAction.fulfilled, state => {
+				state.isDeletingMessage = false
+			})
+			.addCase(updateMessageAction.rejected, state => {
+				state.isDeletingMessage = false
+			})
+			.addCase(searchRooms.pending, state => {
+				state.isSearchingRooms = true
+			})
+			.addCase(searchRooms.fulfilled, (state, action) => {
+				state.isSearchingRooms = false
+				state.searchedRooms = action.payload
+			})
+			.addCase(searchRooms.rejected, state => {
+				state.isSearchingRooms = false
+			})
 	},
 })
 
@@ -168,5 +251,9 @@ export const {
 	saveMessages,
 	onContextMenuMessage,
 	setReplyToMessage,
+	deleteMessage,
+	setDeleteMessageId,
+	onUpdateMessage,
+	setUpdatingMessage,
 } = roomsSlice.actions
 export default roomsSlice.reducer

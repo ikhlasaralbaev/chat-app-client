@@ -8,25 +8,29 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react'
 import EmojiPicker from 'emoji-picker-react'
-import { useAppDispatch, useAppSelector } from 'hooks/store.hooks'
+import { useAppSelector } from 'hooks/store.hooks'
 import useClickOutside from 'hooks/use-click-outside'
 import React, { useState } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { BsEmojiSmile } from 'react-icons/bs'
 import FileMessageSection from './file-message-section/file-message-section'
 import ReplyToMessageSection from './reply-to-message-section/reply-to-message-section'
+import UpdateMessageSection from './update-message-section/update-message-section'
 
 interface SendMessageFormProps {
 	onSubmit?: (message: string, files: File[]) => void
 }
 
 const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
-	const { isLoading, replyToMessage } = useAppSelector(state => state.rooms)
+	const {
+		isSendingMessage: isLoading,
+		replyToMessage,
+		updatingMessage,
+	} = useAppSelector(state => state.rooms)
 	const [message, setMessage] = useState('')
 	const [files, setFiles] = useState<File[]>([])
 	const { isOpen, onToggle } = useDisclosure()
 	const emojiRef = useClickOutside(() => onToggle())
-	const dispatch = useAppDispatch()
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
@@ -49,8 +53,6 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 	const handleEmojiSelect = (emoji: any) => {
 		setMessage(message + emoji.emoji)
 	}
-
-	console.log(message)
 
 	return (
 		<Box
@@ -75,6 +77,7 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 				<FileMessageSection file={files[0]} onDelete={handleClearFiles} />
 			) : null}
 			{replyToMessage ? <ReplyToMessageSection /> : null}
+			{updatingMessage ? <UpdateMessageSection /> : null}
 			<Flex align='center' gap={2}>
 				<label htmlFor='file-upload'>
 					<Box
@@ -96,7 +99,7 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 					</Box>
 					<input
 						type='file'
-						accept='image/*, video/*, audio/*'
+						accept='image/*'
 						onChange={handleFileChange}
 						style={{ visibility: 'hidden', position: 'absolute' }}
 						id='file-upload'

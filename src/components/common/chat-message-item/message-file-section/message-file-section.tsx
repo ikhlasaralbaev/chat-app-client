@@ -11,7 +11,7 @@ import {
 	VStack,
 	useDisclosure,
 } from '@chakra-ui/react'
-import { baseUrl } from 'api/axios.interceptor'
+import { imageWithBaseUrl } from 'lib/image/image.helper'
 import React from 'react'
 import { IFile } from 'services/file/file.types'
 
@@ -44,8 +44,8 @@ const MessageFileSection: React.FC<MessageFileSectionProps> = ({ file }) => {
 							<Image
 								boxSize='full'
 								objectFit='cover'
-								src={baseUrl + '/uploads/' + file.path}
-								alt={baseUrl + '/uploads/' + file.path}
+								src={imageWithBaseUrl(file.path)}
+								alt={imageWithBaseUrl(file.path)}
 								borderRadius='md'
 							/>
 						</Box>
@@ -68,8 +68,8 @@ const MessageFileSection: React.FC<MessageFileSectionProps> = ({ file }) => {
 					<ModalCloseButton />
 					<ModalBody display='flex' alignItems='center' justifyContent='center'>
 						<Image
-							src={baseUrl + '/uploads/' + file.path}
-							alt={file.path}
+							src={imageWithBaseUrl(file.path)}
+							alt={imageWithBaseUrl(file.path)}
 							maxH='90vh'
 						/>
 					</ModalBody>

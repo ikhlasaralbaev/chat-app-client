@@ -5,6 +5,7 @@ import {
 	Box,
 	Flex,
 	HStack,
+	Spinner,
 	Text,
 	VStack,
 	useColorModeValue,
@@ -35,11 +36,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 		replied_message,
 		replies,
 		file,
+		is_updated,
 	} = msg
 	const { user } = useAppSelector(state => state.auth)
-	const { messageIsOpenContextMenu } = useAppSelector(state => state.rooms)
+	const { messageIsOpenContextMenu, isDeletingMessage, deleteMessageId } =
+		useAppSelector(state => state.rooms)
 	const isMyMessage = user?.id == created_by?.id
-	const edited = false
 	const dispatch = useAppDispatch()
 
 	const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0 })
@@ -69,20 +71,32 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 				}
 				align={'start'}
 				spacing={2}
-				p={4}
+				p={3}
 				bg={
 					isMyMessage
 						? useColorModeValue('blue.50', 'blue.800')
 						: useColorModeValue('gray.50', 'gray.700')
 				}
-				borderRadius='md'
+				borderRadius='lg'
 				shadow='sm'
 				maxW='60%'
 				alignSelf={isMyMessage ? 'flex-end' : 'flex-start'}
 				onContextMenu={handleContextMenu}
 				pos={'relative'}
 			>
-				<Flex w={'full'}>{file && <MessageFileSection file={file} />}</Flex>
+				{isDeletingMessage && deleteMessageId === _id ? (
+					<Spinner
+						pos={'absolute'}
+						size={'sm'}
+						style={isMyMessage ? { left: '-30px' } : { right: '-30px' }}
+					/>
+				) : null}
+				{file && (
+					<Flex w={'full'}>
+						{' '}
+						<MessageFileSection file={file} />
+					</Flex>
+				)}
 				{replied_message && (
 					<Box
 						p={2}
@@ -99,7 +113,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						<Text fontSize='sm'>{replied_message.message}</Text>
 					</Box>
 				)}
-
 				<HStack align='start' spacing={4} w={'full'}>
 					{!isMyMessage && (
 						<Avatar
@@ -117,12 +130,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 							<Text fontSize='sm' color='gray.500'>
 								{moment(created_at).format('HH:mm:ss')}
 							</Text>
-							{edited && (
+							{is_updated && (
 								<Text fontSize='xs' color='gray.400'>
 									(edited)
 								</Text>
 							)}
 						</HStack>
+
 						<Text>{message}</Text>
 					</VStack>
 					{isMyMessage && (
@@ -132,7 +146,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						/>
 					)}
 				</HStack>
-
 				{replies?.length ? (
 					<>
 						<Box mt={2} />

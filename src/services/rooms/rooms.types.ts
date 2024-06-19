@@ -87,6 +87,7 @@ export interface IMessage {
 	file?: IFile
 	replied_message?: IMessage | null
 	replies?: IMessage[] | null
+	is_updated?: boolean
 }
 
 export interface IMessageCreatedBy {

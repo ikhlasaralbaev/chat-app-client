@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react'
 import ChatList from 'components/common/chat-list/chat-list'
-import SearchChat from 'components/common/search-chat/search-chat'
 import SidebarHeader from 'components/common/sidebar-header/sidebar-header'
 import SidebarRecommendedChats from 'components/common/sidebar-recommended-chats/sidebar-recommended-chats'
 import { useAppDispatch, useAppSelector } from 'hooks/store.hooks'
@@ -11,7 +10,7 @@ import { subscribedRooms } from 'store/actions/rooms.action'
 import { toggleSidebar } from 'store/slices/ui/ui.slice'
 
 const Sidebar: FC = () => {
-	const { subscribedRooms: subscribedRoomsData } = useAppSelector(
+	const { subscribedRooms: subscribedRoomsData, isLoading } = useAppSelector(
 		state => state.rooms
 	)
 	const dispatch = useAppDispatch()
@@ -49,8 +48,10 @@ const Sidebar: FC = () => {
 			zIndex={'60'}
 		>
 			<SidebarHeader />
-			<SearchChat />
-			{subscribedRoomsData.length === 0 ? (
+			{/* <Link to={'/recommended-rooms'}>
+				<SearchChat />
+			</Link> */}
+			{!isLoading && subscribedRoomsData.length === 0 ? (
 				<SidebarRecommendedChats />
 			) : (
 				<ChatList />

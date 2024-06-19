@@ -40,4 +40,21 @@ export const RoomsService = {
 		const res = await axiosInstance.post<IRoomCreateResponse>('/chats', data)
 		return res.data
 	},
+	async deleteMessage(message: string, room: string) {
+		const res = await axiosInstance.delete(`/chats/messages/${message}`, {
+			data: { room_id: room },
+		})
+		return res.data
+	},
+	async updateMessage(message: string, message_id: string, file_id?: number) {
+		const res = await axiosInstance.put(`/chats/messages/${message_id}`, {
+			message,
+			file_id,
+		})
+		return res.data
+	},
+	async searchRooms(search: string) {
+		const res = await axiosInstance.get(`/chats/search-rooms?search=${search}`)
+		return res.data
+	},
 }

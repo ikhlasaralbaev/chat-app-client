@@ -43,8 +43,12 @@ const ChatListItem: FC<Props> = ({ chat_room, avatar }) => {
 			</Avatar>
 
 			<Stack spacing={0}>
-				<Text fontWeight={'semibold'}>{chat_room.name}</Text>
-				<Text fontSize={'sm'}>You: Hello world! My friend...</Text>
+				<Text color={isActive ? 'white' : ''} fontWeight={'semibold'}>
+					{chat_room.name}
+				</Text>
+				<Text color={isActive ? 'gray.100	' : ''} fontSize={'sm'}>
+					You: Hello world! My friend...
+				</Text>
 				{incomingMsg ? <Badge color={'green'}>{incomingMsg}</Badge> : ''}
 			</Stack>
 		</Flex>

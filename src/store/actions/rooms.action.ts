@@ -90,3 +90,43 @@ export const createRoom = createAsyncThunk<
 		return thunkAPI.rejectWithValue(error)
 	}
 })
+
+export const deleteMessageAction = createAsyncThunk(
+	'rooms/delete-msg',
+	async ({ message, room }: { message: string; room: string }, thunkAPI) => {
+		try {
+			return RoomsService.deleteMessage(message, room)
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+export const updateMessageAction = createAsyncThunk(
+	'rooms/update-msg',
+	async (
+		{
+			message,
+			message_id,
+			file_id,
+		}: { message: string; message_id: string; file_id?: number },
+		thunkAPI
+	) => {
+		try {
+			return RoomsService.updateMessage(message, message_id, file_id)
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+export const searchRooms = createAsyncThunk(
+	'rooms/search-rooms',
+	async ({ search }: { search: string }, thunkAPI) => {
+		try {
+			return RoomsService.searchRooms(search)
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)

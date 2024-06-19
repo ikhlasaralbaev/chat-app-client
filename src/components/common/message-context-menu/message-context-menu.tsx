@@ -14,7 +14,12 @@ import {
 import { useAppDispatch } from 'hooks/store.hooks'
 import React, { CSSProperties, useRef } from 'react'
 import { IMessage } from 'services/rooms/rooms.types'
-import { setReplyToMessage } from 'store/slices/rooms/rooms.slice'
+import { deleteMessageAction } from 'store/actions/rooms.action'
+import {
+	setDeleteMessageId,
+	setReplyToMessage,
+	setUpdatingMessage,
+} from 'store/slices/rooms/rooms.slice'
 
 interface ContextMenuProps {
 	onEdit: () => void
@@ -40,20 +45,18 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 	const dispatch = useAppDispatch()
 
 	const handleEdit = () => {
-		onEdit()
-		toast({
-			title: 'Edit clicked.',
-			description: 'You can edit your message.',
-			status: 'info',
-			duration: 3000,
-			isClosable: true,
-		})
+		dispatch(setUpdatingMessage(msg!))
 		onClose()
 	}
 
 	const handleReplyMessage = () => {
 		dispatch(setReplyToMessage(msg!))
 		onClose()
+	}
+
+	const handleDeleteMessage = () => {
+		dispatch(deleteMessageAction({ message: msg?._id!, room: msg?.room._id! }))
+		dispatch(setDeleteMessageId(msg?._id!))
 	}
 
 	const customStyles: CSSProperties = {
@@ -95,6 +98,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 							Edit
 						</MenuItem>
 						<MenuItem
+							onClick={handleDeleteMessage}
 							_hover={{
 								bg: 'blue.500',
 								color: 'white',
