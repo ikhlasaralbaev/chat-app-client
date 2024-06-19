@@ -32,7 +32,7 @@ export const RoomsService = {
 		const res = await axiosInstance.post(`/chats/messages/${room}`, {
 			message,
 			replied_message_id,
-			file,
+			file_id: file,
 		})
 		return res.data
 	},

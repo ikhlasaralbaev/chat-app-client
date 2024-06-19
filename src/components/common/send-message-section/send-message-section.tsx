@@ -13,6 +13,7 @@ import useClickOutside from 'hooks/use-click-outside'
 import React, { useState } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { BsEmojiSmile } from 'react-icons/bs'
+import FileMessageSection from './file-message-section/file-message-section'
 import ReplyToMessageSection from './reply-to-message-section/reply-to-message-section'
 
 interface SendMessageFormProps {
@@ -34,6 +35,10 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 		}
 	}
 
+	const handleClearFiles = () => {
+		setFiles([])
+	}
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		onSubmit?.(message, files)
@@ -44,6 +49,8 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 	const handleEmojiSelect = (emoji: any) => {
 		setMessage(message + emoji.emoji)
 	}
+
+	console.log(message)
 
 	return (
 		<Box
@@ -64,6 +71,9 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 			zIndex='50'
 			borderTop={'1px solid rgba(0,0,0,.05)'}
 		>
+			{files.length ? (
+				<FileMessageSection file={files[0]} onDelete={handleClearFiles} />
+			) : null}
 			{replyToMessage ? <ReplyToMessageSection /> : null}
 			<Flex align='center' gap={2}>
 				<label htmlFor='file-upload'>
@@ -109,7 +119,6 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 					colorScheme='blue'
 					type='button'
 					aria-label='Send message'
-					disabled={message.trim().length === 0}
 				>
 					<BsEmojiSmile size={'28px'} />
 				</IconButton>
@@ -120,7 +129,7 @@ const SendMessageForm: React.FC<SendMessageFormProps> = ({ onSubmit }) => {
 					type='submit'
 					aria-label='Send message'
 					isLoading={isLoading}
-					disabled={message.trim().length === 0}
+					isDisabled={message.trim().length === 0}
 				>
 					<BiSend size={'28px'} />
 				</IconButton>

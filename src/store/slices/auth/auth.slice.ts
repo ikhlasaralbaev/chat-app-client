@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import {
+	ILoginResponse,
 	ILoginResponseData,
 	IRegisterResponse,
 	IUserType,
@@ -8,6 +9,7 @@ import {
 	getMeAction,
 	loginAction,
 	registerAction,
+	updateProfileAction,
 } from 'store/actions/auth.action'
 
 export interface IAuthInitialState {
@@ -94,6 +96,23 @@ export const authSlice = createSlice({
 				}
 			)
 			.addCase(getMeAction.rejected, state => {
+				state.isLoading = false
+			})
+			.addCase(updateProfileAction.pending, state => {
+				state.isLoading = true
+			})
+			.addCase(
+				updateProfileAction.fulfilled,
+				(state, action: PayloadAction<ILoginResponse>) => {
+					let data = state.user!
+
+					data.avatar = action.payload.user.avatar
+					data.name = action.payload.user.name
+
+					state.isLoading = false
+				}
+			)
+			.addCase(updateProfileAction.rejected, state => {
 				state.isLoading = false
 			})
 	},

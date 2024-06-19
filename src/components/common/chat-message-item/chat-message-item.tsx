@@ -10,11 +10,13 @@ import {
 	useColorModeValue,
 } from '@chakra-ui/react'
 import { useAppDispatch, useAppSelector } from 'hooks/store.hooks'
+import { imageWithBaseUrl } from 'lib/image/image.helper'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { IMessage } from 'services/rooms/rooms.types'
 import { onContextMenuMessage } from 'store/slices/rooms/rooms.slice'
 import ContextMenu from '../message-context-menu/message-context-menu'
+import MessageFileSection from './message-file-section/message-file-section'
 interface ChatMessageProps extends IMessage {
 	onEditMessage?: (id: string) => void
 	onDeleteMessage?: (id: string) => void
@@ -25,7 +27,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	onDeleteMessage,
 	...msg
 }) => {
-	const { created_at, message, created_by, _id, replied_message, replies } = msg
+	const {
+		created_at,
+		message,
+		created_by,
+		_id,
+		replied_message,
+		replies,
+		file,
+	} = msg
 	const { user } = useAppSelector(state => state.auth)
 	const { messageIsOpenContextMenu } = useAppSelector(state => state.rooms)
 	const isMyMessage = user?.id == created_by?.id
@@ -57,7 +67,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						? 'blur(10px)'
 						: ''
 				}
-				align={isMyMessage ? 'end' : 'start'}
+				align={'start'}
 				spacing={2}
 				p={4}
 				bg={
@@ -67,11 +77,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 				}
 				borderRadius='md'
 				shadow='sm'
-				maxW='80%'
+				maxW='60%'
 				alignSelf={isMyMessage ? 'flex-end' : 'flex-start'}
 				onContextMenu={handleContextMenu}
 				pos={'relative'}
 			>
+				<Flex w={'full'}>{file && <MessageFileSection file={file} />}</Flex>
 				{replied_message && (
 					<Box
 						p={2}
@@ -80,6 +91,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						borderColor={useColorModeValue('gray.300', 'gray.500')}
 						borderRadius='md'
 						w='full'
+						mb={2}
 					>
 						<Text fontSize='sm' fontWeight='bold'>
 							{replied_message?.created_by?.name || 'Deleted account'}
@@ -87,11 +99,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						<Text fontSize='sm'>{replied_message.message}</Text>
 					</Box>
 				)}
-				<HStack align='start' spacing={4}>
+
+				<HStack align='start' spacing={4} w={'full'}>
 					{!isMyMessage && (
-						<Avatar src={created_by?.avatar} name={created_by?.name} />
+						<Avatar
+							src={imageWithBaseUrl(created_by?.avatar)}
+							name={created_by?.name}
+						/>
 					)}
-					<VStack align='start' spacing={1}>
+					<VStack align='start' spacing={1} w={'full'}>
 						<HStack position={'relative'}>
 							{
 								<Text fontWeight='bold'>
@@ -110,7 +126,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						<Text>{message}</Text>
 					</VStack>
 					{isMyMessage && (
-						<Avatar src={created_by?.avatar} name={created_by?.name} />
+						<Avatar
+							src={imageWithBaseUrl(created_by?.avatar)}
+							name={created_by?.name}
+						/>
 					)}
 				</HStack>
 
@@ -132,6 +151,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 					</>
 				) : null}
 			</VStack>
+
 			<ContextMenu
 				onEdit={() => onEditMessage?.(_id)}
 				onDelete={() => onDeleteMessage?.(_id!)}

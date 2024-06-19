@@ -42,3 +42,14 @@ export const getMeAction = createAsyncThunk<ILoginResponseData>(
 		}
 	}
 )
+
+export const updateProfileAction = createAsyncThunk<
+	ILoginResponse,
+	{ name?: string; avatar?: string }
+>('auth/update-me', async ({ name, avatar }, thunkAPI) => {
+	try {
+		return AuthService.updateProfile({ name, avatar })
+	} catch (error) {
+		return thunkAPI.rejectWithValue(error)
+	}
+})

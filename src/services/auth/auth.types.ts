@@ -2,6 +2,10 @@ export interface IAuthService {
 	register(data: IRegisterRequestData): Promise<IRegisterResponse>
 	login(data: ILoginRequestData): Promise<ILoginResponse>
 	getMe(): Promise<ILoginResponseData>
+	updateProfile(data: {
+		name?: string
+		avatar?: string
+	}): Promise<ILoginResponse>
 }
 
 export type CallbackWithStatusType = (status: number) => void

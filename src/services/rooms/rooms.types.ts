@@ -1,3 +1,5 @@
+import { IFile } from 'services/file/file.types'
+
 export interface IMySubscribedRooms {
 	data: ISubscribedRoom[]
 }
@@ -82,7 +84,7 @@ export interface IMessage {
 	created_at: string
 	room: Room
 	created_by: IMessageCreatedBy
-	file?: string
+	file?: IFile
 	replied_message?: IMessage | null
 	replies?: IMessage[] | null
 }

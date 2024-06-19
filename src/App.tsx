@@ -3,6 +3,7 @@ import { useAppDispatch } from 'hooks/store.hooks'
 import AuthPage from 'pages/auth/auth'
 import CreateRoom from 'pages/create-room/create-room'
 import RecommendedRooms from 'pages/recommended-rooms/recommended-rooms'
+import UserProfilePage from 'pages/user-profile/user-profile'
 import { FC, useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import { getMeAction } from 'store/actions/auth.action'
@@ -30,6 +31,7 @@ const App: FC = () => {
 				<Route path='/chat/:roomId' element={<Chat />} />
 				<Route path='/recommended-rooms' element={<RecommendedRooms />} />
 				<Route path='/create-room' element={<CreateRoom />} />
+				<Route path='/profile' element={<UserProfilePage />} />
 			</Route>
 		</Routes>
 	)

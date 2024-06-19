@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+export const baseUrl = 'http://127.0.0.1:8080'
 // Create an instance of axios
 const axiosInstance = axios.create({
 	baseURL: 'http://127.0.0.1:8080/api', // Replace with your API base URL

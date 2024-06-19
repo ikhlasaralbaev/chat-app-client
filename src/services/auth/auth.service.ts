@@ -23,4 +23,8 @@ export const AuthService: IAuthService = {
 		const res = await axiosInstance.get('/auth/profile')
 		return res.data.data
 	},
+	async updateProfile(data) {
+		const res = await axiosInstance.put('/auth/profile', data)
+		return res.data
+	},
 }
